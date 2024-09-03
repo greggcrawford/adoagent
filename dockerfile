@@ -54,8 +54,10 @@ RUN chmod +x ./start.sh
 RUN useradd -m -d /home/agent agent
 RUN chown -R agent:agent /azp /home/agent
 
-USER agent
-# Another option is to run the agent as root.
-# ENV AGENT_ALLOW_RUNASROOT="true"
+# Uncomment to allow the agent to run as root
+ENV AGENT_ALLOW_RUNASROOT="true"
+
+# Remove USER agent to run as root
+# USER agent
 
 ENTRYPOINT [ "./start.sh" ]
