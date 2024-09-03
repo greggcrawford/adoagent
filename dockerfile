@@ -24,6 +24,7 @@ RUN apt-get update \
         nodejs \
         npm \
         python3-pip \
+        python3-venv \  # Install python3-venv
         gettext-base  # This installs envsubst
 
 # Install Azure CLI
