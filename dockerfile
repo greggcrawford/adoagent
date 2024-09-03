@@ -22,7 +22,9 @@ RUN apt-get update \
         dnsutils \
         gnupg \
         nodejs \
-        npm
+        npm \
+        python3-pip \
+        gettext-base  # This installs envsubst
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -39,7 +41,9 @@ RUN npm install -g azure-functions-core-tools@4
 # Verify installations
 RUN terraform -version \
 && az --version \
-&& func --version
+&& func --version \
+&& pip3 --version \
+&& envsubst --version
 
 WORKDIR /azp/
 
