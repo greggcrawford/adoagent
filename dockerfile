@@ -24,8 +24,8 @@ RUN apt-get update \
         nodejs \
         npm \
         python3-pip \
-        python3-venv \  # Install python3-venv
-        gettext-base  # This installs envsubst
+        python3-venv \
+        gettext-base
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
