@@ -1,5 +1,7 @@
 FROM mcr.microsoft.com/azure-powershell:ubuntu-22.04
 ENV TARGETARCH="linux-x64"
+ENV PYTHON_VERSION=3.9
+ENV PYTHONPATH=/usr/local/lib/python${PYTHON_VERSION}
 
 # To make it easier for build and release pipelines to run apt-get,
 # configure apt to not require confirmation (assume the -y argument by default)
@@ -23,21 +25,15 @@ RUN apt-get update \
         gnupg \
         nodejs \
         npm \
-        python3.9 \
+        python${PYTHON_VERSION} \
         python3-pip \
         gettext-base \
         powershell \
         zip \
-        docker.io
-
-# Remove any other versions of Python
-RUN apt-get purge -y python3.10 python3.10-minimal
-
-# Ensure python3 points to python3.9
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
-
-# Install python3-distutils for Python 3.9
-RUN apt-get install -y python3-distutils
+        docker.io \
+&& apt-get purge -y python3.10 python3.10-minimal \
+&& apt-get clean \
+&& update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
