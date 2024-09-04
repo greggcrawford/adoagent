@@ -23,9 +23,18 @@ RUN apt-get update \
         gnupg \
         nodejs \
         npm \
+        python3.9 \
         python3-pip \
-        python3-venv \
-        gettext-base
+        gettext-base \
+        powershell \
+        zip \
+        docker.io
+
+# Remove any other versions of Python
+RUN apt-get purge -y python3.10
+
+# Ensure python3 points to python3.9
+RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -44,7 +53,11 @@ RUN terraform -version \
 && az --version \
 && func --version \
 && pip3 --version \
-&& envsubst --version
+&& python3 --version \
+&& envsubst --version \
+&& pwsh --version \
+&& zip --version \
+&& docker --version
 
 WORKDIR /azp/
 
@@ -56,9 +69,9 @@ RUN useradd -m -d /home/agent agent
 RUN chown -R agent:agent /azp /home/agent
 
 # Uncomment to allow the agent to run as root
-ENV AGENT_ALLOW_RUNASROOT="true"
+# ENV AGENT_ALLOW_RUNASROOT="true"
 
 # Remove USER agent to run as root
-# USER agent
+USER agent
 
 ENTRYPOINT [ "./start.sh" ]
