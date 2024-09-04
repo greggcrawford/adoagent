@@ -8,6 +8,13 @@ ENV PYTHONPATH=/usr/local/lib/python${PYTHON_VERSION}
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
+# Update and remove Python 3.10 first
+RUN apt-get update \
+&& apt-get purge -y python3.10 python3.10-minimal python3 python3-minimal \
+&& apt-get autoremove -y \
+&& apt-get clean
+
+# Install necessary packages including Python 3.9
 RUN apt-get update \
 && apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -31,7 +38,6 @@ RUN apt-get update \
         powershell \
         zip \
         docker.io \
-&& apt-get purge -y python3.10 python3.10-minimal \
 && apt-get clean \
 && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1
 
