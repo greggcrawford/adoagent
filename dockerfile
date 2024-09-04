@@ -1,22 +1,11 @@
 FROM mcr.microsoft.com/azure-powershell:ubuntu-22.04
 ENV TARGETARCH="linux-x64"
-ENV PYTHON_VERSION=3.9
-ENV PYTHONPATH=/usr/local/lib/python${PYTHON_VERSION}
 
 # To make it easier for build and release pipelines to run apt-get,
 # configure apt to not require confirmation (assume the -y argument by default)
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
-# Install software-properties-common to manage repositories
-RUN apt-get update \
-&& apt-get install -y software-properties-common
-
-# Add deadsnakes PPA for Python 3.9
-RUN add-apt-repository ppa:deadsnakes/ppa \
-&& apt-get update
-
-# Install necessary packages including Python 3.9
 RUN apt-get update \
 && apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -34,20 +23,11 @@ RUN apt-get update \
         gnupg \
         nodejs \
         npm \
-        python${PYTHON_VERSION} \
-        python${PYTHON_VERSION}-distutils \
         python3-pip \
         gettext-base \
         powershell \
         zip \
-        docker.io \
-&& apt-get clean \
-&& update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1
-
-# Remove any other versions of Python after installing Python 3.9
-RUN apt-get purge -y python3.10 python3.10-minimal python3 python3-minimal \
-&& apt-get autoremove -y \
-&& apt-get clean
+        docker.io
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -82,9 +62,9 @@ RUN useradd -m -d /home/agent agent
 RUN chown -R agent:agent /azp /home/agent
 
 # Uncomment to allow the agent to run as root
-ENV AGENT_ALLOW_RUNASROOT="true"
+# ENV AGENT_ALLOW_RUNASROOT="true"
 
 # Remove USER agent to run as root
-# USER agent
+USER agent
 
 ENTRYPOINT [ "./start.sh" ]
