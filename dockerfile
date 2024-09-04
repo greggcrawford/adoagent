@@ -8,12 +8,6 @@ ENV PYTHONPATH=/usr/local/lib/python${PYTHON_VERSION}
 ENV DEBIAN_FRONTEND=noninteractive
 RUN echo "APT::Get::Assume-Yes \"true\";" > /etc/apt/apt.conf.d/90assumeyes
 
-# Update and remove Python 3.10 first
-RUN apt-get update \
-&& apt-get purge -y python3.10 python3.10-minimal python3 python3-minimal \
-&& apt-get autoremove -y \
-&& apt-get clean
-
 # Install software-properties-common to manage repositories
 RUN apt-get update \
 && apt-get install -y software-properties-common
@@ -41,6 +35,7 @@ RUN apt-get update \
         nodejs \
         npm \
         python${PYTHON_VERSION} \
+        python${PYTHON_VERSION}-distutils \
         python3-pip \
         gettext-base \
         powershell \
@@ -48,6 +43,11 @@ RUN apt-get update \
         docker.io \
 && apt-get clean \
 && update-alternatives --install /usr/bin/python3 python3 /usr/bin/python${PYTHON_VERSION} 1
+
+# Remove any other versions of Python after installing Python 3.9
+RUN apt-get purge -y python3.10 python3.10-minimal python3 python3-minimal \
+&& apt-get autoremove -y \
+&& apt-get clean
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -82,9 +82,9 @@ RUN useradd -m -d /home/agent agent
 RUN chown -R agent:agent /azp /home/agent
 
 # Uncomment to allow the agent to run as root
-# ENV AGENT_ALLOW_RUNASROOT="true"
+ENV AGENT_ALLOW_RUNASROOT="true"
 
 # Remove USER agent to run as root
-USER agent
+# USER agent
 
 ENTRYPOINT [ "./start.sh" ]
