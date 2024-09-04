@@ -24,7 +24,6 @@ RUN apt-get update \
         nodejs \
         npm \
         python3.9 \
-        python3.9-distutils \
         python3-pip \
         gettext-base \
         powershell \
@@ -36,6 +35,9 @@ RUN apt-get purge -y python3.10 python3.10-minimal
 
 # Ensure python3 points to python3.9
 RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.9 1
+
+# Install python3-distutils for Python 3.9
+RUN apt-get install -y python3-distutils
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -70,9 +72,9 @@ RUN useradd -m -d /home/agent agent
 RUN chown -R agent:agent /azp /home/agent
 
 # Uncomment to allow the agent to run as root
-# ENV AGENT_ALLOW_RUNASROOT="true"
+ENV AGENT_ALLOW_RUNASROOT="true"
 
 # Remove USER agent to run as root
-USER agent
+# USER agent
 
 ENTRYPOINT [ "./start.sh" ]
