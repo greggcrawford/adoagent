@@ -14,6 +14,14 @@ RUN apt-get update \
 && apt-get autoremove -y \
 && apt-get clean
 
+# Install software-properties-common to manage repositories
+RUN apt-get update \
+&& apt-get install -y software-properties-common
+
+# Add deadsnakes PPA for Python 3.9
+RUN add-apt-repository ppa:deadsnakes/ppa \
+&& apt-get update
+
 # Install necessary packages including Python 3.9
 RUN apt-get update \
 && apt-get install -y --no-install-recommends \
@@ -74,9 +82,9 @@ RUN useradd -m -d /home/agent agent
 RUN chown -R agent:agent /azp /home/agent
 
 # Uncomment to allow the agent to run as root
-ENV AGENT_ALLOW_RUNASROOT="true"
+# ENV AGENT_ALLOW_RUNASROOT="true"
 
 # Remove USER agent to run as root
-# USER agent
+USER agent
 
 ENTRYPOINT [ "./start.sh" ]
