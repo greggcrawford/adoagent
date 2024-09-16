@@ -21,13 +21,15 @@ RUN apt-get update \
         unzip \
         dnsutils \
         gnupg \
-        nodejs \
         npm \
         python3-pip \
         gettext-base \
         powershell \
-        zip \
-        docker.io
+        zip
+
+# Install Node.js 18.x from NodeSource
+RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
+&& apt-get install -y nodejs
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
@@ -50,7 +52,8 @@ RUN terraform -version \
 && envsubst --version \
 && pwsh --version \
 && zip --version \
-&& docker --version
+&& node -v \
+&& npm -v
 
 WORKDIR /azp/
 
