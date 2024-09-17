@@ -27,6 +27,9 @@ RUN apt-get update \
         powershell \
         zip
 
+# Remove conflicting package
+RUN apt-get remove -y libnode-dev
+
 # Install Node.js 18.x from NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
 && apt-get install -y nodejs
