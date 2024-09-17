@@ -27,8 +27,13 @@ RUN apt-get update \
         powershell \
         zip
 
+# Remove conflicting package
+RUN apt-get remove -y libnode72
+
+# Install Node.js 18.x from NodeSource
 RUN curl -fsSL https://deb.nodesource.com/setup_18.x | bash - \
-&& apt-get install -y --force-overwrite nodejs
+&& apt-get download nodejs \
+&& dpkg -i --force-overwrite $(find . -name "nodejs_*.deb")
 
 # Install Azure CLI
 RUN curl -sL https://aka.ms/InstallAzureCLIDeb | bash
